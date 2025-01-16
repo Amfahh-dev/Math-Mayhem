@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Math Solver</title>
+    <title>Math Solver by Amfahh</title>
     <style>
         body {
             font-family: sans-serif;
             margin: 20px;
+            background-color: #f4f4f9;
         }
+
         .container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: white;
         }
-        label {
-            display: block;
-            margin-bottom: 10px;
+
+        h1, h2 {
+            text-align: center;
+            color: #4CAF50;
         }
+
+        .section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            display: none;
+            background-color: #f9f9f9;
+        }
+
         input[type="text"] {
             width: 100%;
-            padding: 5px;
+            padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 3px;
         }
+
         button {
             padding: 10px 20px;
             background-color: #4CAF50;
@@ -32,59 +47,158 @@
             border: none;
             border-radius: 3px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
         #result {
-            margin-top: 20px;
+            margin-top: 10px;
             font-weight: bold;
+            color: #333;
         }
+
+        #thankYouSection {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            background-color: #fffbe6;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff5722;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        #thankYouSection.show {
+            opacity: 1;
+        }
+
+        .emoji {
+            font-size: 3em;
+        }
+
+        .highlight {
+            color: #ff5722;
+            font-size: 1.4em;
+        }
+
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Math Solver</h1>
+        <h1>Math Solver by Amfahh</h1>
 
-        <label for="equation">Enter equation:</label>
-        <input type="text" id="equation" placeholder="e.g., 2x + 5 = 11">
+        <p>Hi! I'm Amfahh, a 12-year-old student at Beaconhouse PCHS Campus. 
+            I created this math solver to help with my studies and to share my passion for math with others.</p>
 
-        <button onclick="solve()">Solve</button>
+        <h2>Choose a Topic:</h2>
+        <button onclick="showAlgebra()">Algebra</button>
+        <button onclick="showProbability()">Probability</button>
 
-        <div id="result"></div>
+        <div id="algebraSection" class="section">
+            <h3>Algebra</h3>
+            <label for="algebraEquation">Enter equation:</label>
+            <input type="text" id="algebraEquation" placeholder="e.g., 56x - 8 = 6">
+            <button onclick="solveAlgebra()">Solve</button>
+            <div id="algebraResult"></div>
+        </div>
+
+        <div id="probabilitySection" class="section">
+            <h3>Probability</h3>
+            <label for="probabilityEquation">Enter probability:</label>
+            <input type="text" id="probabilityEquation" placeholder="e.g., 3/8">
+            <button onclick="solveProbability()">Calculate</button>
+            <div id="probabilityResult"></div>
+        </div>
+
+        <div id="thankYouSection" class="section">
+            <span class="emoji">🎉</span>
+            <p>Thank you for using the Math Solver by Amfahh! <span class="highlight">You're awesome!</span></p>
+            <p>Stay curious and keep solving!</p>
+        </div>
+
     </div>
 
     <script>
-        function solve() {
-            var equation = document.getElementById("equation").value;
+        function showAlgebra() {
+            document.getElementById("algebraSection").style.display = "block";
+            document.getElementById("probabilitySection").style.display = "none";
+            document.getElementById("thankYouSection").style.display = "none"; // Hide thank you message when switching topics
+        }
 
-            // Basic algebra solver (example)
-            if (equation.includes("x")) {
-                // Extract coefficients and constant
-                var parts = equation.split("=");
-                var leftSide = parts[0];
-                var rightSide = parts[1];
+        function showProbability() {
+            document.getElementById("algebraSection").style.display = "none";
+            document.getElementById("probabilitySection").style.display = "block";
+            document.getElementById("thankYouSection").style.display = "none"; // Hide thank you message when switching topics
+        }
 
-                // Extract coefficient of 'x'
-                var coefficient = parseFloat(leftSide.split("x")[0]);
+        function solveAlgebra() {
+            var equation = document.getElementById("algebraEquation").value;
+            var result = document.getElementById("algebraResult");
 
-                // Extract constant
-                var constant = parseFloat(leftSide.split("x")[1]);
+            var regex = /([+-]?\d*)x\s*([+-]?\d+)\s*=\s*([+-]?\d+)/;
+            var match = equation.match(regex);
 
-                // Solve for 'x'
-                var x = (parseFloat(rightSide) - constant) / coefficient;
+            if (match) {
+                var coefficient = match[1] === "" || match[1] === "+" ? 1 : (match[1] === "-" ? -1 : parseFloat(match[1]));
+                var constant = parseFloat(match[2]);
+                var rhs = parseFloat(match[3]);
 
-                document.getElementById("result").innerHTML = "Solution: x = " + x;
-            } else if (equation.includes("P")) {
-                // Simple probability calculation (example)
-                var parts = equation.split("/");
+                var x = (rhs - constant) / coefficient;
+                result.innerHTML = "Solution: x = " + x;
+                showThankYou();
+            } else {
+                result.innerHTML = "Invalid equation format. Please use the format: ax + b = c";
+            }
+        }
+
+        function solveProbability() {
+            var probability = document.getElementById("probabilityEquation").value;
+
+            try {
+                var parts = probability.split("/");
                 var numerator = parseFloat(parts[0]);
                 var denominator = parseFloat(parts[1]);
 
-                var probability = numerator / denominator;
+                if (denominator === 0) {
+                    throw new Error("Division by zero is not allowed.");
+                }
 
-                document.getElementById("result").innerHTML = "Probability: " + probability;
-            } else {
-                document.getElementById("result").innerHTML = "Invalid equation.";
+                var result = numerator / denominator;
+
+                if (result === 0) {
+                    document.getElementById("probabilityResult").innerHTML = "Impossible (0%)";
+                } else if (result < 0.25) {
+                    document.getElementById("probabilityResult").innerHTML = "Unlikely (<25%)";
+                } else if (result < 0.5) {
+                    document.getElementById("probabilityResult").innerHTML = "Unlikely (<50%)";
+                } else if (result === 0.5) {
+                    document.getElementById("probabilityResult").innerHTML = "Even Chance (50%)";
+                } else if (result < 0.75) {
+                    document.getElementById("probabilityResult").innerHTML = "Likely (>50%)";
+                } else {
+                    document.getElementById("probabilityResult").innerHTML = "Likely (>75%)";
+                }
+                showThankYou();
+            } catch (error) {
+                document.getElementById("probabilityResult").innerHTML = error.message;
             }
+        }
+
+        function showThankYou() {
+            // Display the thank you message with animation
+            var thankYouSection = document.getElementById("thankYouSection");
+            thankYouSection.style.display = "block";
+            setTimeout(function() {
+                thankYouSection.classList.add("show");
+            }, 100);
         }
     </script>
 
